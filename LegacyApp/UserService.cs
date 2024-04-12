@@ -1,26 +1,26 @@
 ﻿using System;
 
+using LegacyApp.Validators.Interface;
+using LegacyApp.Validators;
+
 namespace LegacyApp
 {
     public class UserService
     {
+        private ValidatorInterface _validatorInterface = new Validator(); 
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            if (!_validatorInterface.ValidateFullName(firstName, lastName))
             {
                 return false;
             }
 
-            if (!email.Contains("@") && !email.Contains("."))
+            if (!_validatorInterface.ValidateEmail(email))
             {
                 return false;
             }
-
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            if (age < 21)
+            
+            if (!_validatorInterface.ValidateAge(dateOfBirth))
             {
                 return false;
             }
